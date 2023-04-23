@@ -120425,13 +120425,11 @@ internalField   nonuniform List<scalar>
 
 boundaryField
 {
-    top
+    top //side
     {
         type		zeroGradient;
-        //type            fixedValue;
-        //value           uniform 836;
     }
-    side
+    side //top
     {
         type            fixedValue;
         value           uniform 1273;
