@@ -1,6 +1,6 @@
 # OpenFOAM-nrg
 
-A git repository of a paper I am trying to publish, in collaboration with NRG POLIMI(https://www.nuclearenergy.polimi.it). OpenFoam solver for fluids with different thermophysical properties. It is a temperature-based fixed-grid method. Developed and tested with [OpenFOAM-6](https://github.com/OpenFOAM/OpenFOAM-6). Compatible with OpenFOAM-nrg.
+A git repository of a paper I am trying to publish, in collaboration with NRG POLIMI (https://www.nuclearenergy.polimi.it). OpenFoam solver for fluids with different thermophysical properties. It is a temperature-based fixed-grid method. Developed and tested with [OpenFOAM-6](https://github.com/OpenFOAM/OpenFOAM-6). Compatible with OpenFOAM-nrg.
 
 Steps for installation:
 
