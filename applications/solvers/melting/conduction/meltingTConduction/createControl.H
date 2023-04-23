@@ -1,0 +1,40 @@
+Info<< "createControl phaseChange" << endl;  
+
+phaseChangeControl phaseChange(Tm,
+			       dT,
+			       rho_l,
+			       rho_s,
+			       k,
+			       cp_l,
+			       cp_s,
+			       L,
+			       C,
+			       relax_g,
+			       relax_T,
+			       residualTarget_g,
+			       residualTarget_T,
+			       nOuterCorrectors,
+			       correlation,
+			       algorithm,
+			       
+			       epsilon,
+			       Ts,
+			       Tl,
+			       deltaCp,
+			       deltaRho,
+			       deltaRhoCp,
+			       lambda,
+			       dHdT_pc,
+			       H_q,
+			       
+			       T,
+			       T_m,
+			       H,
+			       dHdT,
+			       g,
+			       gm,
+			       dgdT,
+			       rho,
+			       f);
+
+simpleControl simple(mesh);

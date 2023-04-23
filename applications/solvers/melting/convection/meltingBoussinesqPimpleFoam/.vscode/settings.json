@@ -1,0 +1,5 @@
+{
+    "files.associations": {
+        "meltingBoussinesqPimpleFoam.C": "cpp"
+    }
+}

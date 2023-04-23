@@ -1,0 +1,5 @@
+fvOptions/linearSource/linearSource.C
+fvOptions/mySolidificationMeltingSource/mySolidificationMeltingSource.C
+fvOptions/mySolidificationMeltingSource/mySolidificationMeltingSourceIO.C
+
+LIB = $(FOAM_USER_LIBBIN)/libnuclear

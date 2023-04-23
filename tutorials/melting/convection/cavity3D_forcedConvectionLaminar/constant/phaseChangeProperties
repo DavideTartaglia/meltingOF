@@ -1,0 +1,64 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  6
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      phaseChangeProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+rho_l           rho_l [1 -3 0 0 0 0 0] 4502;
+
+rho_s           rho_s [1 -3 0 0 0 0 0] 4390;
+
+k             k [1 1 -3 -1 0 0 0] 1.5;
+
+cp_l            cp_l [0 2 -2 -1 0 0 0] 1000;
+
+cp_s            cp_s [0 2 -2 -1 0 0 0] 815;
+
+Tm		Tl [0 0 0 1 0 0 0] 841; //841
+
+L               L [0 2 -2 0 0 0 0] 1.59e5;
+
+// ----------- numerical parameters ------------- //
+
+dT		dT [0 0 0 1 0 0 0] 1;
+
+C		C [1 -3 -1 0 0 0 0] 1.6e8;
+
+relax_g		1;
+
+relax_T		1;
+
+residualTarget_g	1e-5;
+
+residualTarget_T	1e-5;
+
+nOuterCorrectors	20;
+
+algorithm	dynamic; //source //apparentCp //dynamic
+
+//select the type of g-T-H correlation (models avail):
+// 0: linear g-T (source, sourceImplicit, optimum, apparentCp)
+// 1: linear H-T (optimum, apparentCp)
+// 2: sigmoid g-T (sourceImplicit, apparentCp, optimum)
+// 3: numerical estimation of dgdT (apparentCp, optimum)
+// 4: newton update
+
+correlation	0;
+
+
+//buoyant_exponent	buoyant_exponent [0 0 0 0 0 0 0] 1.894816;
+
+//w		w [0 0 0 -1.894816 0 0 0] 9.297173e-6;
+
+// ************************************************************************* //
