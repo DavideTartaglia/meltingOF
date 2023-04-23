@@ -84,3 +84,4 @@ doc/Doxygen/DTAGS
 
 # Ignore the run test cases
 /tutorials/**/[1-9]*/
+/tutorials/**/log.*
