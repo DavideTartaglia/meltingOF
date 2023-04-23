@@ -1,0 +1,108 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  6
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 836;
+
+boundaryField
+{    
+    side //top
+    {
+        //type            zeroGradient;
+        type            fixedValue;
+        value           uniform 1273;
+    }
+
+    top  //side
+    {
+        type            codedFixedValue;
+        value           uniform 836;
+
+        redirectType	codedFixedValue;
+        
+        codeInclude
+        #{
+        	#include "fvCFD.H"
+        	#include <cmath>
+        #};
+        
+        codeOptions
+        #{
+        	-I$(LIB_SRC)/finiteVolume/lnInclude \
+        	-I$(LIB_SRC)/meshTools/lnInclude
+        #};
+        
+        
+        code
+        #{
+        	const fvPatch& boundaryPatch = patch();
+        	const vectorField& Cf = boundaryPatch.Cf();
+        	scalarField& field = *this;
+        	
+        	// thermophysical parameters of the PCM (water)
+        	const double Cp	= 578;
+        	const double rho = 8860;
+        	const double k = 23.6;
+
+        	const double L 	= 0.2;
+
+        	const double T_H = 1273;
+        	const double T_0 = 836;
+
+        	const double alfa = k/(rho*Cp);
+        	
+        	const scalar t = this->db().time().value(); //time
+        	
+        	forAll(Cf, faceI)
+        	{
+        		const scalar z = Cf[faceI].z(); // z coordinate of the face i
+        		const scalar r = L - z;
+        		
+        		field[faceI] = T_H - (T_H-T_0)*std::erf(r/2/std::sqrt(alfa*t));
+        	}
+        	
+        #};
+
+        //type            fixedValue;
+        //value           uniform 845;
+        //type            zeroGradient;
+    }
+
+    bottom
+    {
+        //type            fixedValue;
+        //value           uniform 504.49;
+        type            zeroGradient;
+    }
+/*
+    south
+    {
+        type            zeroGradient;
+        //type            fixedValue;
+        //value           uniform 260;
+    }
+
+    frontAndBack
+    {
+        type            empty;
+    }
+*/
+}
+
+
+// ************************************************************************* //

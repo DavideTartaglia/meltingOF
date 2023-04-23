@@ -83,5 +83,11 @@ doc/Doxygen/DTAGS
 /.ycm*
 
 # Ignore the run test cases
-/tutorials/**/[1-9]*/
+/tutorials/melting/conduction/1D_melting/**/[1-9]*/
+/tutorials/melting/conduction/1D_melting_thermoDiff/**/[1-9]*/
+/tutorials/melting/conduction/2D_melting/**/[1-9]*/
+/tutorials/melting/conduction/3D_cylinder/**/[1-9]*/
+/tutorials/melting/conduction/3D_cylinder_adiabatic/**/[1-9]*/
+/tutorials/melting/conduction/3D_cylinder_stationary/**/[1-9]*/
+/tutorials/melting/convection/**/[1-9]*/
 /tutorials/**/log.*

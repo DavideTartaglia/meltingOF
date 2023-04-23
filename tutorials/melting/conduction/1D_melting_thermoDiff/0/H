@@ -1,0 +1,60 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  7
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      h;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+/****** Initialize H boundary conditions according to the temperature ********/
+
+//*************************** OPTIUMUM APPROACH *****************************//
+/* step 1.	check if the boundary is liquid, solid or mushy
+   step 2.	if solid,	h = rho_s*cp_s*T;
+		if liquid,	h = rho_l*cp_l*T + L - rho_l*cp_l*dT -(rho_l*cp_l-rho_s*cp_s)*Tm;
+		if mushy,	h = rho_s*cp_s*Tm + L*(T-Tm)/dT;
+*/
+
+//************************* ENTHALPY-BASED METHODS **************************//
+/* step 1.	check if the boundary is liquid, solid or mushy
+   step 2.	if solid,	h = rho_s*cp_s*T;
+		if liquid,	h = rho_l*cp_l*(T-Tm) + L + rho_s*cp_s*Tm;
+		if mushy,	h = rho_s*cp_s*Tm + L*(T-Tm)/dT;
+*/
+//****************************************************************************/
+
+
+
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform 530400e3;  // T = 260K = -13.15°C, solid
+
+boundaryField
+{
+    inlet
+    {
+        type            fixedValue;
+        value           uniform 974640e3; // T = 293.15K = 293.15°C, liquid
+    }
+    outlet
+    {
+        type            zeroGradient;
+    }
+
+    empty
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

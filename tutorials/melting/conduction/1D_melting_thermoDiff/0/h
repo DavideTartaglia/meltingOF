@@ -1,0 +1,52 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  7
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      h;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+/****** Initialize h boundary conditions according to the temperature ********/
+
+//*************************** enthalpy APPROACH *****************************//
+/* step 1.	check if the boundary is liquid, solid or mushy
+   step 2.	if solid(i.e., f=0),	h = cp_s*(T-Tm); (i.e., h<0)
+		if liquid(i.e., f=1),	h = cp_l*(T-Tm) + L; (i.e., h>0)
+		if mushy(i.e., 0<f<1),	h = (cp_s*(1-f) + cp_l*f)*(T-Tm) + L*f;
+*/
+//***************************************************************************//
+
+
+dimensions      [0 2 -2 0 0 0 0];
+
+internalField   uniform -10e3;  // T = 260K = -13.15°C, solid
+
+boundaryField
+{
+    inlet
+    {
+        type            fixedValue;
+        value           uniform 110e3; // T = 293.15K = 293.15°C, liquid
+    }
+    outlet
+    {
+        type            zeroGradient;
+    }
+
+    empty
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

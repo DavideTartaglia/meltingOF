@@ -1,0 +1,349 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  7
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 260;
+
+boundaryField
+{
+    north
+    {
+        type            codedFixedValue;
+        value           uniform 260;
+
+        redirectType	codedFixedValue;
+        
+        codeInclude
+        #{
+        	#include "fvCFD.H"
+        	#include <cmath>
+        #};
+        
+        codeOptions
+        #{
+        	-I$(LIB_SRC)/finiteVolume/lnInclude \
+        	-I$(LIB_SRC)/meshTools/lnInclude
+        #};
+        
+        
+        code
+        #{
+        	const fvPatch& boundaryPatch = patch();
+        	const vectorField& Cf = boundaryPatch.Cf();
+        	scalarField& field = *this;
+        	
+        	
+        	// geometrical parameters of the plane of melting
+        	const double x0		= 0.10;
+        	const double y0		= 0.10;
+        	const double z0		= 0.;
+        	const double Theta	= 45*3.14159/180;;
+        	const double Phi        = 90*3.14159/180;;
+        	
+        	// thermophysical parameters of the PCM (water)
+        	const double Cp_l	= 4.186e3;
+        	const double Cp_s 	= 2.04e3;
+        	const double rho 	= 1000;
+        	const double k 		= 0.6;
+        	const double Tm 	= 273.15;
+
+        	const double T_l 	= 293.15;
+        	const double T_s 	= 260;
+
+        	const double alfa_l 	= k/(rho*Cp_l);
+        	const double alfa_s 	= k/(rho*Cp_s);
+        	const double nu		= std::sqrt(alfa_l/alfa_s);
+        	
+        	const scalar lambda	= 0.30492;
+        	        	
+        	
+        	const scalar t = this->db().time().value(); //time
+        	
+        	forAll(Cf, faceI)
+        	{
+        		const scalar x = Cf[faceI].x(); // x coordinate of the face i
+        		const scalar y = Cf[faceI].y(); // y coordinate of the face i
+        		const scalar z = Cf[faceI].z(); // y coordinate of the face i
+        		const scalar r = std::abs( (x-x0)*std::cos(Theta)*std::sin(Phi) + (y-y0)*std::sin(Theta)*std::sin(Phi) + (z-z0)*std::cos(Phi) ); // distance from the plane
+        					
+
+        		const scalar front = 2*lambda*std::sqrt(alfa_l*t);  // liquid front position
+        		
+        		if (r<front)
+        		{
+        		  field[faceI] = T_l - (T_l-Tm)*std::erf(r/2/std::sqrt(alfa_l*t))/std::erf(lambda);
+        		}
+        		
+        		else if (r>=front)
+        		{
+        		  field[faceI] = T_s + (Tm-T_s)*std::erfc(r/2/std::sqrt(alfa_s*t))/std::erfc(lambda*nu);
+        		}        		  
+        		
+        	}
+        	
+        #};
+
+    }
+
+    ovest
+    {
+        type            codedFixedValue;
+        value           uniform 260;
+
+        redirectType	codedFixedValue;
+        
+        codeInclude
+        #{
+        	#include "fvCFD.H"
+        	#include <cmath>
+        #};
+        
+        codeOptions
+        #{
+        	-I$(LIB_SRC)/finiteVolume/lnInclude \
+        	-I$(LIB_SRC)/meshTools/lnInclude
+        #};
+        
+        
+        code
+        #{
+        	const fvPatch& boundaryPatch = patch();
+        	const vectorField& Cf = boundaryPatch.Cf();
+        	scalarField& field = *this;
+        	
+        	
+        	// geometrical parameters of the plane of melting
+        	const double x0		= 0.10;
+        	const double y0		= 0.10;
+        	const double z0		= 0.;
+        	const double Theta	= 45*3.14159/180;;
+        	const double Phi        = 90*3.14159/180;;
+        	
+        	// thermophysical parameters of the PCM (water)
+        	const double Cp_l	= 4.186e3;
+        	const double Cp_s 	= 2.04e3;
+        	const double rho 	= 1000;
+        	const double k 		= 0.6;
+        	const double Tm 	= 273.15;
+
+        	const double T_l 	= 293.15;
+        	const double T_s 	= 260;
+
+        	const double alfa_l 	= k/(rho*Cp_l);
+        	const double alfa_s 	= k/(rho*Cp_s);
+        	const double nu		= std::sqrt(alfa_l/alfa_s);
+        	
+        	const scalar lambda	= 0.30492;
+        	        	
+        	
+        	const scalar t = this->db().time().value(); //time
+        	
+        	forAll(Cf, faceI)
+        	{
+        		const scalar x = Cf[faceI].x(); // x coordinate of the face i
+        		const scalar y = Cf[faceI].y(); // y coordinate of the face i
+        		const scalar z = Cf[faceI].z(); // y coordinate of the face i
+        		const scalar r = std::abs( (x-x0)*std::cos(Theta)*std::sin(Phi) + (y-y0)*std::sin(Theta)*std::sin(Phi) + (z-z0)*std::cos(Phi) ); // distance from the plane
+        					
+
+        		const scalar front = 2*lambda*std::sqrt(alfa_l*t);  // liquid front position
+        		
+        		if (r<front)
+        		{
+        		  field[faceI] = T_l - (T_l-Tm)*std::erf(r/2/std::sqrt(alfa_l*t))/std::erf(lambda);
+        		}
+        		
+        		else if (r>=front)
+        		{
+        		  field[faceI] = T_s + (Tm-T_s)*std::erfc(r/2/std::sqrt(alfa_s*t))/std::erfc(lambda*nu);
+        		}        		  
+        		
+        	}
+        	
+        #};
+
+    }
+
+
+    east
+    {
+        type            codedFixedValue;
+        value           uniform 260;
+
+        redirectType	codedFixedValue;
+        
+        codeInclude
+        #{
+        	#include "fvCFD.H"
+        	#include <cmath>
+        #};
+        
+        codeOptions
+        #{
+        	-I$(LIB_SRC)/finiteVolume/lnInclude \
+        	-I$(LIB_SRC)/meshTools/lnInclude
+        #};
+        
+        
+        code
+        #{
+        	const fvPatch& boundaryPatch = patch();
+        	const vectorField& Cf = boundaryPatch.Cf();
+        	scalarField& field = *this;
+        	
+        	
+        	// geometrical parameters of the plane of melting
+        	const double x0		= 0.10;
+        	const double y0		= 0.10;
+        	const double z0		= 0.;
+        	const double Theta	= 45*3.14159/180;;
+        	const double Phi        = 90*3.14159/180;;
+        	
+        	// thermophysical parameters of the PCM (water)
+        	const double Cp_l	= 4.186e3;
+        	const double Cp_s 	= 2.04e3;
+        	const double rho 	= 1000;
+        	const double k 		= 0.6;
+        	const double Tm 	= 273.15;
+
+        	const double T_l 	= 293.15;
+        	const double T_s 	= 260;
+
+        	const double alfa_l 	= k/(rho*Cp_l);
+        	const double alfa_s 	= k/(rho*Cp_s);
+        	const double nu		= std::sqrt(alfa_l/alfa_s);
+        	
+        	const scalar lambda	= 0.30492;
+        	        	
+        	
+        	const scalar t = this->db().time().value(); //time
+        	
+        	forAll(Cf, faceI)
+        	{
+        		const scalar x = Cf[faceI].x(); // x coordinate of the face i
+        		const scalar y = Cf[faceI].y(); // y coordinate of the face i
+        		const scalar z = Cf[faceI].z(); // y coordinate of the face i
+        		const scalar r = std::abs( (x-x0)*std::cos(Theta)*std::sin(Phi) + (y-y0)*std::sin(Theta)*std::sin(Phi) + (z-z0)*std::cos(Phi) ); // distance from the plane
+        					
+
+        		const scalar front = 2*lambda*std::sqrt(alfa_l*t);  // liquid front position
+        		
+        		if (r<front)
+        		{
+        		  field[faceI] = T_l - (T_l-Tm)*std::erf(r/2/std::sqrt(alfa_l*t))/std::erf(lambda);
+        		}
+        		
+        		else if (r>=front)
+        		{
+        		  field[faceI] = T_s + (Tm-T_s)*std::erfc(r/2/std::sqrt(alfa_s*t))/std::erfc(lambda*nu);
+        		}        		  
+        		
+        	}
+        	
+        #};
+
+    }
+
+
+    south
+    {
+        type            codedFixedValue;
+        value           uniform 260;
+
+        redirectType	codedFixedValue;
+        
+        codeInclude
+        #{
+        	#include "fvCFD.H"
+        	#include <cmath>
+        #};
+        
+        codeOptions
+        #{
+        	-I$(LIB_SRC)/finiteVolume/lnInclude \
+        	-I$(LIB_SRC)/meshTools/lnInclude
+        #};
+        
+        
+        code
+        #{
+        	const fvPatch& boundaryPatch = patch();
+        	const vectorField& Cf = boundaryPatch.Cf();
+        	scalarField& field = *this;
+        	
+        	
+        	// geometrical parameters of the plane of melting
+        	const double x0		= 0.10;
+        	const double y0		= 0.10;
+        	const double z0		= 0.;
+        	const double Theta	= 45*3.14159/180;;
+        	const double Phi        = 90*3.14159/180;;
+        	
+        	// thermophysical parameters of the PCM (water)
+        	const double Cp_l	= 4.186e3;
+        	const double Cp_s 	= 2.04e3;
+        	const double rho 	= 1000;
+        	const double k 		= 0.6;
+        	const double Tm 	= 273.15;
+
+        	const double T_l 	= 293.15;
+        	const double T_s 	= 260;
+
+        	const double alfa_l 	= k/(rho*Cp_l);
+        	const double alfa_s 	= k/(rho*Cp_s);
+        	const double nu		= std::sqrt(alfa_l/alfa_s);
+        	
+        	const scalar lambda	= 0.30492;
+        	        	
+        	
+        	const scalar t = this->db().time().value(); //time
+        	
+        	forAll(Cf, faceI)
+        	{
+        		const scalar x = Cf[faceI].x(); // x coordinate of the face i
+        		const scalar y = Cf[faceI].y(); // y coordinate of the face i
+        		const scalar z = Cf[faceI].z(); // y coordinate of the face i
+        		const scalar r = std::abs( (x-x0)*std::cos(Theta)*std::sin(Phi) + (y-y0)*std::sin(Theta)*std::sin(Phi) + (z-z0)*std::cos(Phi) ); // distance from the plane
+        					
+
+        		const scalar front = 2*lambda*std::sqrt(alfa_l*t);  // liquid front position
+        		
+        		if (r<front)
+        		{
+        		  field[faceI] = T_l - (T_l-Tm)*std::erf(r/2/std::sqrt(alfa_l*t))/std::erf(lambda);
+        		}
+        		
+        		else if (r>=front)
+        		{
+        		  field[faceI] = T_s + (Tm-T_s)*std::erfc(r/2/std::sqrt(alfa_s*t))/std::erfc(lambda*nu);
+        		}        		  
+        		
+        	}
+        	
+        #};
+
+    }
+
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //
