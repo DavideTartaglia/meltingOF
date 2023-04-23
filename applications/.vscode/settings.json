@@ -1,3 +1,8 @@
 {
-    "git.ignoreLimitWarning": true
+    "cmake.configureOnOpen": true,
+    "files.associations": {
+        "meltingBoussinesqPimpleFoam.C": "cpp",
+        "*.tcc": "cpp",
+        "fvmSup.C": "cpp"
+    }
 }

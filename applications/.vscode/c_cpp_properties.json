@@ -3,7 +3,9 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/opt/openfoam6/src/**",
+                "/opt/openfoam6/applications/solvers/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
