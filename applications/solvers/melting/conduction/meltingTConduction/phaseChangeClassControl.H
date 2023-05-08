@@ -81,7 +81,7 @@ private:
 		    {
 		      dgdTi = 0;
 		    }
-		  else if (Ti>Ts && Ti<Tl)
+		  else if (Ti>=Ts && Ti<=Tl)
 		    {
 		      dgdTi = 1.0/(Tl-Ts);
 		    }
@@ -120,7 +120,7 @@ private:
 		      dHdTi = cpl*rhol;
 		      dgdTi = 0;
 		    }
-		  else if (Ti>Ts && Ti<Tl)
+		  else if (Ti>=Ts && Ti<=Tl)
 		    {
 		      dHdTi = dHdT_pc;
 		      dgdTi = 1;
@@ -174,7 +174,7 @@ private:
 		      dHdTi = cpl*rhol;
 		      dgdTi = 0;
 		    }
-		  else if (Hi>Hs && Hi<Hl)
+		  else if (Hi>=Hs && Hi<=Hl)
 		    {
 		      dHdTi = dHdT_pc;
 		      dgdTi = 1;
@@ -421,37 +421,48 @@ public:
 
   volScalarField Sp()
   {
-    if(my_algorithm==("implicit") || my_algorithm==("apparentCp"))
-      {
-	Info<< "\nSp: implicit OR apparentCp algorithm\n";
-	return my_dHdT;
-      }
-    else if(my_algorithm==("source"))
-      {
-	Info<< "\nSp: source method\n";
-	return (my_rho_s*my_cp_s + my_deltaRhoCp*my_g);
-      }
+	// if T.mesh().steady() is false (ie if the ddt fvScheme is not transient), then
+	if(!my_T.mesh().steady())
+	{
+		if(my_algorithm==("implicit") || my_algorithm==("apparentCp"))
+		{
+		Info<< "\nSp: implicit OR apparentCp algorithm\n";
+		return my_dHdT;
+		}
+		else if(my_algorithm==("source"))
+		{
+		Info<< "\nSp: source method\n";
+		return (my_rho_s*my_cp_s + my_deltaRhoCp*my_g);
+		}
+	}
+	else
+	{ return my_dHdT*0.0; }
   }
 
   volScalarField Su()
   {
-    if(my_algorithm==("implicit"))
-      {
-	Info<< "\nSu: implicit algorithm";
-	return (-my_dHdT*my_T_m + my_H - my_H.oldTime());
-      }
-    else if (my_algorithm==("apparentCp"))
-      {
-	Info<< "\nSu: apparentCp algorithm";
-	return (-my_dHdT*my_T.oldTime());
-      }
-    else if (my_algorithm==("source"))
-      {
-	Info<< "\nSu: source algorithm";
-	return (- my_rho_s*my_cp_s*my_T.oldTime()\
-		- my_deltaRhoCp*my_g.oldTime()*my_T.oldTime()\
-		+ my_rho_l*my_lambda*(my_g - my_g.oldTime()));
-      }
+	if(!my_T.mesh().steady())
+	{
+		if(my_algorithm==("implicit"))
+		{
+		Info<< "\nSu: implicit algorithm";
+		return (-my_dHdT*my_T_m + my_H - my_H.oldTime());
+		}
+		else if (my_algorithm==("apparentCp"))
+		{
+		Info<< "\nSu: apparentCp algorithm";
+		return (-my_dHdT*my_T.oldTime());
+		}
+		else if (my_algorithm==("source"))
+		{
+		Info<< "\nSu: source algorithm";
+		return (- my_rho_s*my_cp_s*my_T.oldTime()\
+			- my_deltaRhoCp*my_g.oldTime()*my_T.oldTime()\
+			+ my_rho_l*my_lambda*(my_g - my_g.oldTime()));
+		}
+	}
+	else
+	{ return my_H*0.0; }
   }
       
   
@@ -652,26 +663,26 @@ public:
   bool skip()
   {
     // does the temperature at the new time skip the latent heat peak?
-    	      forAll(my_T,i)
-		{
-		  scalar& Ti = my_T[i];
-		  scalar& Toi = my_T.oldTime()[i];
-		  scalar& Ts = my_Ts.value();
-		  scalar& Tl = my_Tl.value();
+    forAll(my_T,i)
+      {
+	scalar& Ti = my_T[i];
+	scalar& Toi = my_T.oldTime()[i];
+	scalar& Ts = my_Ts.value();
+	scalar& Tl = my_Tl.value();
 		  
-		  if( ((Toi<Ts) && (Ti>Tl))
-		      ||
-		      ((Toi>Tl) && (Ti<Ts))
-		    )
-		    {
-		      if(my_algorithm=="apparentCp")
-			{
-			  Info<< "\nSKIPPING phase change interval!!!\n"
-			      << "adopting dynamic algorithm adjustment";
-			}
-		      return true;
-		    }
-		}
+	if( ((Toi<Ts) && (Ti>Tl))
+	    ||
+	    ((Toi>Tl) && (Ti<Ts))
+	    )
+	  {
+	    if(my_algorithm=="apparentCp")
+	      {
+		Info<< "\nSKIPPING phase change interval!!!\n"
+		    << "adopting dynamic algorithm adjustment";
+	      }
+	    return true;
+	  }
+      }
 	      
     return false;
   }
