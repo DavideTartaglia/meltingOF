@@ -26,3 +26,5 @@ Steps for installation:
     ```
     This will compile all solvers in `applications/solvers/` and libraries in `src/`.
 
+## Reference :
+https://www.tandfonline.com/doi/full/10.1080/00295639.2023.2229576
