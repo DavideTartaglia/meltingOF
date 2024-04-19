@@ -1,6 +1,6 @@
-# OpenFOAM-nrg
+# meltingOF
 
-A git repository of a paper I am trying to publish, in collaboration with NRG POLIMI (https://www.nuclearenergy.polimi.it). OpenFoam melting solver for fluids with different thermophysical properties from solid to liquid. It is a temperature-based fixed-grid method. Developed and tested with [OpenFOAM-6](https://github.com/OpenFOAM/OpenFOAM-6). Compatible with OpenFOAM-nrg.
+OpenFoam melting solver for fluids with different thermophysical properties from solid to liquid. It is a temperature-based fixed-grid method. Developed and tested with [OpenFOAM-6](https://github.com/OpenFOAM/OpenFOAM-6). Developed in collaboration with NRG @polimi (https://www.nuclearenergy.polimi.it/about-us/). Compatible with OpenFOAM-nrg repository.
 
 Steps for installation:
 
